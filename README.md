@@ -1,85 +1,64 @@
-# dslink-java-v2-example
+# dslink-java-v2-mailer
 
-* Version: 1.0.0
+* Version: 0.0.0.0
 * Java - version 1.6 and up.
 * [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-
 ## Overview
 
-This is a simple link that can copied and used as the boilerplate for a new Java DSLink.
+Link for sending e-mail alarms and notifications.
 
-If you are not familiar with DSA and links, an overview can be found at
+If you are not familiar with DSA, an overview can be found at
 [here](http://iot-dsa.org/get-started/how-dsa-works).
 
-This link was built using the DSLink Java SDK which can be found
-[here](https://github.com/iot-dsa-v2/sdk-dslink-java-v2).
-
-
-## Creating a New Link
-
-When creating a new link from this source material, you should do the following:
-
-1. Edit the code
-    - Change the package and directories to match your organization.
-2. Modify build.gradle
-    - group - Your organization's identifier.
-    - You will probably need to change your dependencies.
-3. Modify LICENSE
-    - At the very least, change the copyright holder.
-4. Modify dslink.json
-    - Change name, version, and description.
-    - Change main, this is the path to the shell script used to launch the link.  It is created
-      by the distZip task.
-    - Change the value of the config named "rootType". This must be the fully qualified class name 
-      of your root node.
-5. Edit this README
-    - Please maintain a helpful readme.
-    - Change the title.
-    - Maintain the current version number.
-    - Change the license if necessary.
-    - Provide an overview of the link's purpose.  Keep the text linking to the DSA overview
-      and core SDK for context.
-    - Remote this section (Creating a New Link).
-    - Update the Link Architecture.
-    - Update the Node Guide.
-    - Acknowledge any 3rd party libraries you use.
-    - Maintain a version history.
+This link was built using the Java DSLink SDK which can be found
+[here](https://github.com/iot-dsa-v2/sdk-dslink-java).
 
 ## Link Architecture
 
 This section outlines the hierarchy of nodes defined by this link.
 
-- _RootNode_ - The root node of the link.
-  - _ExampleChild_ - There is no child, this is just a documentation example.
+- _RootNode_ - Used to add new e-mail account connections.
+  - _ConnectionNode_ - Used to send e-mails and manage the account.
 
 
-## RootNode
+## Node Guide
 
-This is the root node of the link.  It has a counter that is updated on a short interval,
-only when the node is subscribed.  It also has a simple action to reset the counter.
+The following section provides detailed descriptions of each node in the link as well as
+descriptions of actions, values and child nodes.
 
-_Actions_
-- Reset - Resets the counter to 0.
 
-_Values_
-- Counter - Automatically updates whenever the node is subscribed.
+### RootNode
 
-_Child Nodes_
-- There are no child nodes.
+This is the root node of the link.  It has actions for connecting to new databases.
 
+**Actions**
+- Connect - Connects to a new e-mail account.
+
+**Values**
+- Docs - Link to the GitHub Documentation
+
+**Child Nodes**
+- ConnectionNode - A new connection node is created for each new e-mail account
+
+### ConnectionNode
+
+Each connection node represents a new e-mail account connection.
+
+**Actions**
+
+**Values**
 
 ## Acknowledgements
 
 SDK-DSLINK-JAVA
 
 This software contains unmodified binary redistributions of 
-[sdk-dslink-java-v2](https://github.com/iot-dsa-v2/sdk-dslink-java-v2), which is licensed 
+[sdk-dslink-java](https://github.com/iot-dsa-v2/sdk-dslink-java), which is licensed 
 and available under the Apache License 2.0. An original copy of the license agreement can be found 
-at https://github.com/iot-dsa-v2/sdk-dslink-java-v2/blob/master/LICENSE
+at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 ## History
 
-* Version 1.0.0
-  - Hello World
-
+* Version 0.0.0.0
+  - Initial Development
