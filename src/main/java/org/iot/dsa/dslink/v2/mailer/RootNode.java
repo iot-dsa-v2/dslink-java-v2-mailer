@@ -1,4 +1,4 @@
-package org.iot.dsa.dslink.example;
+package org.iot.dsa.dslink.v2.mailer;
 
 import org.iot.dsa.DSRuntime;
 import org.iot.dsa.dslink.DSRootNode;
@@ -62,7 +62,7 @@ public class RootNode extends DSRootNode implements Runnable {
                 .setReadOnly(true);
         declareDefault(RESET, DSAction.DEFAULT);
         // Change the following URL to your README
-        declareDefault(DOCS, DSString.valueOf("https://github.com/iot-dsa-v2/dslink-java-v2-example"))
+        declareDefault(DOCS, DSString.valueOf("https://github.com/iot-dsa-v2/dslink-java-v2-mailer"))
                 .setTransient(true)
                 .setReadOnly(true);
     }
@@ -90,7 +90,7 @@ public class RootNode extends DSRootNode implements Runnable {
     @Override
     protected void onSubscribed() {
         // Use DSRuntime for timers and its thread pool.
-        timer = DSRuntime.run(this, System.currentTimeMillis() + 1000l, 1000l);
+        timer = DSRuntime.run(this, System.currentTimeMillis() + 1000, 1000);
     }
 
     /**

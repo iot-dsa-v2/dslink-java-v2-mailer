@@ -1,18 +1,16 @@
 {
-  "name": "dslink-java-v2-example",
+  "name": "MAILv2",
   "version": "1.0.0",
-  "description": "Example Java Link",
-  "main": "bin/dslink-java-v2-example",
+  "description": "E-mail link",
+  "main": "bin/dslink-java-v2-mailer",
   "configs": {
     "rootType": {
-      "desc1": "*************** THIS IS REQUIRED AND MUST BE CHANGED ***************",
-      "desc2": "Fully qualified class name of the root node of the link.",
+      "desc": "Fully qualified class name of the root node of the link.",
       "type": "string",
-      "value": "org.iot.dsa.dslink.example.RootNode"
+      "value": "org.iot.dsa.dslink.v2.mailer.RootNode"
     },
     "broker": {
-      "desc1": "*************** OPTIONAL CONFIGS IN ALPHABETICAL ORDER ***************",
-      "desc2": "URL to broker.",
+      "desc": "URL to broker.",
       "type": "url",
       "value": null
     },
