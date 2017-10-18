@@ -14,8 +14,6 @@ import org.iot.dsa.node.action.DSAction;
  */
 public class RootNode extends DSRootNode {
 
-    private static boolean once = false;
-
     // Nodes must support the public no-arg constructor.  Technically this isn't required here
     // since there are no other constructors...
     public RootNode() {
