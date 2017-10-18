@@ -1,54 +1,25 @@
 package org.iot.dsa.dslink.v2.mailer;
 
-import org.iot.dsa.DSRuntime;
 import org.iot.dsa.dslink.DSRootNode;
-import org.iot.dsa.node.DSInfo;
-import org.iot.dsa.node.DSInt;
-import org.iot.dsa.node.DSString;
+import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
 import org.iot.dsa.node.action.DSAction;
 
 /**
- * The root and only node of this link.
+ * Root node for the mailer DSLink
  *
- * @author Aaron Hansen
+ * @author James (Juris) Puchin
+ * Created on 10/17/2017
  */
-public class RootNode extends DSRootNode implements Runnable {
+public class RootNode extends DSRootNode {
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Constants
-    ///////////////////////////////////////////////////////////////////////////
-
-    private static String COUNTER = "Counter";
-    private static String DOCS = "Docs";
-    private static String RESET = "Reset";
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Fields
-    ///////////////////////////////////////////////////////////////////////////
-
-    // Nodes store children and meta-data about the relationship in DSInfo instances.
-    // Storing infos as Java fields eliminates subsequent name lookups, but should only be
-    // done with declared defaults.  It can be done with dynamic children, but extra
-    // care will be required.
-    private final DSInfo counter = getInfo(COUNTER);
-    private final DSInfo reset = getInfo(RESET);
-
-    private DSRuntime.Timer timer;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Constructors
-    ///////////////////////////////////////////////////////////////////////////
+    private static boolean once = false;
 
     // Nodes must support the public no-arg constructor.  Technically this isn't required here
     // since there are no other constructors...
     public RootNode() {
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Methods
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Defines the permanent children of this node type, their existence is guaranteed in all
@@ -57,83 +28,54 @@ public class RootNode extends DSRootNode implements Runnable {
     @Override
     protected void declareDefaults() {
         super.declareDefaults();
-        declareDefault(COUNTER, DSInt.valueOf(0))
+        declareDefault(Mailv2Helpers.DOCS, DSString.valueOf("https://github.com/iot-dsa-v2/dslink-java-v2-mailer"))
                 .setTransient(true)
                 .setReadOnly(true);
-        declareDefault(RESET, DSAction.DEFAULT);
-        // Change the following URL to your README
-        declareDefault(DOCS, DSString.valueOf("https://github.com/iot-dsa-v2/dslink-java-v2-mailer"))
-                .setTransient(true)
-                .setReadOnly(true);
+        declareDefault(Mailv2Helpers.ADD_SMTP, makeAddSMTPAction());
+        declareDefault(Mailv2Helpers.ADD_GMAIL, makeAddGmailAction());
     }
 
-    /**
-     * Handles the reset action.
-     */
-    @Override
-    public ActionResult onInvoke(DSInfo actionInfo, ActionInvocation invocation) {
-        if (actionInfo == reset) {
-            synchronized (counter) {
-                put(counter, DSInt.valueOf(0));
-                // The following line would have also worked, but it would have
-                // required a name lookup.
-                // put(COUNTER, DSInt.valueOf(0));
+    private DSAction makeAddSMTPAction() {
+        DSAction act = new DSAction() {
+            @Override
+            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
+                return ((RootNode) info.getParent()).addSMTP(invocation.getParameters());
             }
-            return null;
-        }
-        return super.onInvoke(actionInfo, invocation);
+        };
+        act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.E_USER, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.E_PASSWORD, DSValueType.STRING, null).setEditor("password");
+        act.addParameter(Mailv2Helpers.HOST, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.PORT, DSValueType.STRING, null).setDefault(DSString.valueOf("587"));
+        return act;
     }
 
-    /**
-     * Starts the timer.
-     */
-    @Override
-    protected void onSubscribed() {
-        // Use DSRuntime for timers and its thread pool.
-        timer = DSRuntime.run(this, System.currentTimeMillis() + 1000, 1000);
+    private ActionResult addSMTP(DSMap parameters) {
+        DSNode nextDB = new MailConnectionNode(parameters);
+        add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
+        getLink().save();
+        return null;
     }
 
-    /**
-     * Cancels an active timer if there is one.
-     */
-    @Override
-    protected void onStopped() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
+    private DSAction makeAddGmailAction() {
+        DSAction act = new DSAction() {
+            @Override
+            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
+                return ((RootNode) info.getParent()).addGmail(invocation.getParameters());
+            }
+        };
+        act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.E_USER, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.E_PASSWORD, DSValueType.STRING, null).setEditor("password");
+        return act;
     }
 
-    /**
-     * Cancels the timer.
-     */
-    @Override
-    protected void onUnsubscribed() {
-        timer.cancel();
-        timer = null;
+    private ActionResult addGmail(DSMap parameters) {
+        parameters.put(Mailv2Helpers.HOST, DSString.valueOf("smtp.gmail.com"));
+        parameters.put(Mailv2Helpers.PORT, DSString.valueOf("587"));
+        DSNode nextDB = new MailConnectionNode(parameters);
+        add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
+        getLink().save();
+        return null;
     }
-
-    /**
-     * Called by the timer, increments the counter.
-     */
-    @Override
-    public void run() {
-        synchronized (counter) {
-            DSInt value = (DSInt) counter.getValue();
-            put(counter, DSInt.valueOf(value.toInt() + 1));
-            // Without the counter field, this method would have required at least one lookup.
-            // The following is the worst performance option (not that it really matters here):
-            // DSInt val = (DSInt) get(COUNTER);
-            // put(COUNTER, DSInt.valueOf(val.toInt() + 1));
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Inner Classes
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Initialization
-    ///////////////////////////////////////////////////////////////////////////
-
 }

@@ -23,6 +23,10 @@ repositories {
 }
 
 dependencies {
+    //Native Java client
+    compile 'javax.mail:mail:+'
+
+    //DSA Java SDK
     compile 'org.iot.dsa:dslink-core:+'
     compile 'org.iot.dsa:dslink-websocket-standalone:+'
     testCompile 'junit:junit:+'

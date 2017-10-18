@@ -1,12 +1,13 @@
 # dslink-java-v2-mailer
 
-* Version: 0.0.0.0
+* Version: 1.0.0.0
 * Java - version 1.6 and up.
 * [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Overview
 
-Link for sending e-mail alarms and notifications.
+Link for sending e-mail alarms and notifications. 
+Connect a Gmail or other SMTP server account, and use the "Send Mail" action to send alerts and notifications.
 
 If you are not familiar with DSA, an overview can be found at
 [here](http://iot-dsa.org/get-started/how-dsa-works).
@@ -33,7 +34,8 @@ descriptions of actions, values and child nodes.
 This is the root node of the link.  It has actions for connecting to new databases.
 
 **Actions**
-- Connect - Connects to a new e-mail account.
+- Connect SMTP - Connects to an SMTP e-mail account.
+- Connect Gmail - Connects to a Gmail account.
 
 **Values**
 - Docs - Link to the GitHub Documentation
@@ -47,7 +49,15 @@ Each connection node represents a new e-mail account connection.
 
 **Actions**
 
+- Send Mail - Send an e-mail
+- Edit - Edit the account settings
+- Disconnect - Disconnect from the account
+
 **Values**
+
+- Host Name - Host name of the SMTP server
+- Port - SMTP server port
+- User Name - User name used to login to the SMTP server
 
 ## Acknowledgements
 
@@ -60,5 +70,8 @@ at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 ## History
 
+* Version 1.0.0.0
+  - Connect to Gmail or other SMTP
+  - Send e-mails using this connection
 * Version 0.0.0.0
   - Initial Development
