@@ -1,6 +1,8 @@
 package org.iot.dsa.dslink.v2.mailer;
 
 /**
+ * Container for various helper variables and/or functions.
+ *
  * @author James (Juris) Puchin
  * Created on 10/17/2017
  */
