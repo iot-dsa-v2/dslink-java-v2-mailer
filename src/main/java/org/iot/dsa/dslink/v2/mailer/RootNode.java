@@ -13,7 +13,6 @@ import org.iot.dsa.node.action.DSAction;
  * Created on 10/17/2017
  */
 public class RootNode extends DSRootNode {
-    //testing branch
     // Nodes must support the public no-arg constructor.  Technically this isn't required here
     // since there are no other constructors...
     public RootNode() {
