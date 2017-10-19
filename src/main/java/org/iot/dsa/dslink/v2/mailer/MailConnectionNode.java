@@ -96,9 +96,8 @@ public class MailConnectionNode extends DSNode {
         String subj = parameters.getString(Mailv2Helpers.SUBJ);
         String body = parameters.getString(Mailv2Helpers.BODY);
         String from = parameters.getString(Mailv2Helpers.FROM);
-        //TODO: figure out attachments
-        DSElement att = parameters.get(Mailv2Helpers.ATTACH);
-        executeSendMailTLS(to, subj, body, from, cc, bcc);
+        DSBytes attach = DSBytes.NULL.valueOf(parameters.get(Mailv2Helpers.ATTACH));
+        executeSendMailTLS(to, subj, body, from, cc, bcc, attach);
         return null;
     }
 
@@ -135,7 +134,7 @@ public class MailConnectionNode extends DSNode {
         put(password, DSPasswordAes.valueOf(pass));
     }
 
-    private void executeSendMailTLS(String to_mail, String subj, String body, String from, String cc, String bcc) {
+    private void executeSendMailTLS(String to_mail, String subj, String body, String from, String cc, String bcc, DSBytes attach) {
         final String username = usr_name.getValue().toString();
         final String password = getCurPass();
         final String host = this.host.getValue().toString(); // "smtp.gmail.com";
@@ -167,6 +166,9 @@ public class MailConnectionNode extends DSNode {
             else message.setSubject(Mailv2Helpers.DEF_SUBJ);
             if (body != null) message.setText(body);
             else message.setText(Mailv2Helpers.DEF_BODY);
+
+            //TODO: figure out attachments
+            //attach.getBytes();
 
             Transport.send(message);
 
