@@ -1,11 +1,13 @@
 package org.iot.dsa.dslink.v2.mailer;
 
+import org.iot.dsa.dslink.DSRequestException;
 import org.iot.dsa.dslink.DSRootNode;
 import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
 import org.iot.dsa.node.action.DSAction;
 import org.iot.dsa.security.DSPasswordAes;
+import org.iot.dsa.util.DSException;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -53,10 +55,10 @@ public class MailConnectionNode extends DSNode {
                 return ((MailConnectionNode) info.getParent()).edit(invocation.getParameters());
             }
         };
-        act.addParameter(Mailv2Helpers.E_USER, DSValueType.STRING, null);
-        act.addParameter(Mailv2Helpers.E_PASSWORD, DSValueType.STRING, null).setEditor("password");
-        act.addParameter(Mailv2Helpers.HOST, DSValueType.STRING, null);
-        act.addParameter(Mailv2Helpers.PORT, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.E_USER, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.E_PASSWORD, DSValueType.STRING, null).setEditor("password").setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.HOST, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.PORT, DSValueType.STRING, null).setPlaceHolder("Optional");
         return act;
     }
 
@@ -74,17 +76,29 @@ public class MailConnectionNode extends DSNode {
                 return ((MailConnectionNode) info.getParent()).sendMail(invocation.getParameters());
             }
         };
-        act.addParameter(Mailv2Helpers.TO, DSValueType.STRING, null);
-        act.addParameter(Mailv2Helpers.SUBJ, DSValueType.STRING, null).setDefault(DSString.valueOf("Alert"));
-        act.addParameter(Mailv2Helpers.BODY, DSValueType.STRING, null);
+        act.addParameter(Mailv2Helpers.TO, DSValueType.STRING, null).setPlaceHolder("Need one To/Cc/Bcc");
+        act.addParameter(Mailv2Helpers.CC, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.BCC, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.FROM, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.SUBJ, DSValueType.STRING, null).setPlaceHolder(Mailv2Helpers.DEF_SUBJ);
+        act.addParameter(Mailv2Helpers.BODY, DSValueType.STRING, null).setPlaceHolder(Mailv2Helpers.DEF_BODY);
+        act.addParameter(Mailv2Helpers.ATTACH, DSValueType.BINARY, null);
         return act;
     }
 
     private ActionResult sendMail(DSMap parameters) {
-        String to = parameters.get(Mailv2Helpers.TO).toString();
-        String subj = parameters.get(Mailv2Helpers.SUBJ).toString();
-        String body = parameters.get(Mailv2Helpers.BODY).toString();
-        executeSendMailTLS(to, subj, body);
+        String to = parameters.getString(Mailv2Helpers.TO);
+        String cc = parameters.getString(Mailv2Helpers.CC);
+        String bcc = parameters.getString(Mailv2Helpers.BCC);
+        if (to == null && cc == null && bcc == null)
+            throw new DSRequestException("Need to specify e-mail recipient!");
+
+        String subj = parameters.getString(Mailv2Helpers.SUBJ);
+        String body = parameters.getString(Mailv2Helpers.BODY);
+        String from = parameters.getString(Mailv2Helpers.FROM);
+        //TODO: figure out attachments
+        DSElement att = parameters.get(Mailv2Helpers.ATTACH);
+        executeSendMailTLS(to, subj, body, from, cc, bcc);
         return null;
     }
 
@@ -121,7 +135,7 @@ public class MailConnectionNode extends DSNode {
         put(password, DSPasswordAes.valueOf(pass));
     }
 
-    private void executeSendMailTLS(String to_mail, String subj, String body) {
+    private void executeSendMailTLS(String to_mail, String subj, String body, String from, String cc, String bcc) {
         final String username = usr_name.getValue().toString();
         final String password = getCurPass();
         final String host = this.host.getValue().toString(); // "smtp.gmail.com";
@@ -142,11 +156,24 @@ public class MailConnectionNode extends DSNode {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to_mail));
-            message.setSubject(subj);
-            message.setText(body);
+            if (from != null) {
+                message.setFrom(new InternetAddress(from));
+            } else {
+                message.setFrom(new InternetAddress(usr_name.getValue().toString()));
+            }
+            if (to_mail != null) {
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to_mail));
+            }
+            if (cc != null) {
+                message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
+            }
+            if (bcc != null) {
+                message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
+            }
+            if (subj != null) message.setSubject(subj);
+            else message.setSubject(Mailv2Helpers.DEF_SUBJ);
+            if (body != null) message.setText(body);
+            else message.setText(Mailv2Helpers.DEF_BODY);
 
             Transport.send(message);
 
@@ -154,6 +181,7 @@ public class MailConnectionNode extends DSNode {
 
         } catch (MessagingException e) {
             warn("Failed to send e-mail ", e);
+            DSException.throwRuntime(e);
         }
     }
 }
