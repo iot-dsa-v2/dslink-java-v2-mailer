@@ -156,20 +156,13 @@ public class MailConnectionNode extends DSNode {
 
         try {
             Message message = new MimeMessage(session);
-            if (from != null) {
-                message.setFrom(new InternetAddress(from));
-            } else {
-                message.setFrom(new InternetAddress(usr_name.getValue().toString()));
-            }
-            if (to_mail != null) {
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to_mail));
-            }
-            if (cc != null) {
-                message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
-            }
-            if (bcc != null) {
-                message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
-            }
+            if (from != null) message.setFrom(new InternetAddress(from));
+            else message.setFrom(new InternetAddress(usr_name.getValue().toString()));
+
+            if (to_mail != null) message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to_mail));
+            if (cc != null) message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
+            if (bcc != null) message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
+
             if (subj != null) message.setSubject(subj);
             else message.setSubject(Mailv2Helpers.DEF_SUBJ);
             if (body != null) message.setText(body);
