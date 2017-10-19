@@ -76,9 +76,9 @@ public class MailConnectionNode extends DSNode {
                 return ((MailConnectionNode) info.getParent()).sendMail(invocation.getParameters());
             }
         };
-        act.addParameter(Mailv2Helpers.TO, DSValueType.STRING, null).setPlaceHolder("Need one To/Cc/Bcc");
-        act.addParameter(Mailv2Helpers.CC, DSValueType.STRING, null).setPlaceHolder("Optional");
-        act.addParameter(Mailv2Helpers.BCC, DSValueType.STRING, null).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.TO, DSValueType.STRING, Mailv2Helpers.REC_DESC).setPlaceHolder("Need one To/Cc/Bcc");
+        act.addParameter(Mailv2Helpers.CC, DSValueType.STRING, Mailv2Helpers.REC_DESC).setPlaceHolder("Optional");
+        act.addParameter(Mailv2Helpers.BCC, DSValueType.STRING, Mailv2Helpers.REC_DESC).setPlaceHolder("Optional");
         act.addParameter(Mailv2Helpers.FROM, DSValueType.STRING, null).setPlaceHolder("Optional");
         act.addParameter(Mailv2Helpers.SUBJ, DSValueType.STRING, null).setPlaceHolder(Mailv2Helpers.DEF_SUBJ);
         act.addParameter(Mailv2Helpers.BODY, DSValueType.STRING, null).setPlaceHolder(Mailv2Helpers.DEF_BODY);
@@ -91,7 +91,7 @@ public class MailConnectionNode extends DSNode {
         String cc = parameters.getString(Mailv2Helpers.CC);
         String bcc = parameters.getString(Mailv2Helpers.BCC);
         if (to == null && cc == null && bcc == null)
-            throw new DSRequestException("Need to specify e-mail recipient!");
+            throw new DSRequestException("Need to specify an e-mail recipient!");
 
         String subj = parameters.getString(Mailv2Helpers.SUBJ);
         String body = parameters.getString(Mailv2Helpers.BODY);

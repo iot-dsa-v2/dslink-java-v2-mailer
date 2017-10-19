@@ -28,6 +28,7 @@ class Mailv2Helpers {
 
     static final String DELETE = "Disconnect";
 
+    static final String REC_DESC = "Comma separated list of recipients.";
     static final String TO = "To";
     static final String CC = "Cc";
     static final String BCC = "Bcc";
