@@ -35,6 +35,9 @@ class Mailv2Helpers {
     static final String FROM = "From";
     static final String SUBJ = "Subject";
     static final String BODY = "Body";
-    static final String ATTACH = "Attachment";
+    static final String ATTACH_DESC = "Add a single attachment by specifying a Name, and adding a Binary In or File Path.";
+    static final String ATTACH_NAME = "Name";
+    static final String ATTACH_BYTE = "Binary In";
+    static final String ATTACH_PATH = "File Path";
     static final String SEND_MAIL = "Send Mail";
 }
