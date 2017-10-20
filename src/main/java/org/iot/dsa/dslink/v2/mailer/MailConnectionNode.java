@@ -12,13 +12,14 @@ import org.iot.dsa.util.DSException;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.activation.MimetypesFileTypeMap;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -91,7 +92,7 @@ public class MailConnectionNode extends DSNode {
         act.addParameter(Mailv2Helpers.BODY, DSValueType.STRING, null).setPlaceHolder(Mailv2Helpers.DEF_BODY);
         act.addParameter(Mailv2Helpers.ATTACH_NAME, DSValueType.STRING, Mailv2Helpers.ATTACH_DESC).setPlaceHolder("Attachment");
         act.addParameter(Mailv2Helpers.ATTACH_PATH, DSValueType.STRING, Mailv2Helpers.ATTACH_DESC).setPlaceHolder("Attachment");
-        act.addParameter(Mailv2Helpers.ATTACH_BYTE, DSValueType.BINARY, Mailv2Helpers.ATTACH_DESC).setPlaceHolder("Attachment");
+        act.addParameter(Mailv2Helpers.ATTACH_BYTE, DSValueType.BINARY, Mailv2Helpers.ATTACH_DESC).setEditor("fileinput").setPlaceHolder("Attachment");
         return act;
     }
 
@@ -191,13 +192,26 @@ public class MailConnectionNode extends DSNode {
             //Deal with attachments
             if (att_name == null) att_name = "Attachment";
             if (!att_byte.isNull() && att_path != null) {
-                warn( "Two attachments sources specified, can only have one attachment!");
+                warn("Two attachments sources specified, can only have one attachment!");
             } else {
                 //Attach stream
-                //TODO: Handle Stream attachments
                 if (!att_byte.isNull()) {
+                    String mime_type = null;
+                    try {
+                        //Guess type from data
+                        mime_type = Mailv2Helpers.guessMimeType(att_byte.getBytes());
+                    } catch (IOException e) {
+                        //Will create warning if both methods fail
+                        warn("Failed to guess stream data type, will use file name");
+                    }
+
+                    if (mime_type == null) {
+                        //Guess type from extension, default to "application/octet-stream"
+                        mime_type = new MimetypesFileTypeMap().getContentType(att_name);
+                    }
+
                     MimeBodyPart att_b = new MimeBodyPart();
-                    ByteArrayDataSource att_ds = new ByteArrayDataSource(att_byte.getBytes(), att_name);
+                    ByteArrayDataSource att_ds = new ByteArrayDataSource(att_byte.getBytes(), mime_type);
                     att_b.setDataHandler(new DataHandler(att_ds));
                     att_b.setFileName(att_name);
                     multipart.addBodyPart(att_b);

@@ -1,5 +1,10 @@
 package org.iot.dsa.dslink.v2.mailer;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
+
 /**
  * Container for various helper variables and/or functions.
  *
@@ -40,4 +45,12 @@ class Mailv2Helpers {
     static final String ATTACH_BYTE = "Binary In";
     static final String ATTACH_PATH = "File Path";
     static final String SEND_MAIL = "Send Mail";
+
+    ////////////////////
+    //Helper Methods
+    ////////////////////
+    static String guessMimeType(byte[] in) throws IOException {
+        InputStream is = new ByteArrayInputStream(in);
+        return URLConnection.guessContentTypeFromStream(is);
+    }
 }
