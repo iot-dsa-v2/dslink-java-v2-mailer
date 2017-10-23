@@ -1,6 +1,6 @@
 # dslink-java-v2-mailer
 
-* Version: 1.0.0
+* Version: 1.1.0
 * Java - version 1.6 and up.
 * [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -70,6 +70,9 @@ at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 ## History
 
+* Version 1.1.0
+  - Handle From, Cc and Bcc
+  - Handle attachments
 * Version 1.0.0
   - Connect to Gmail or other SMTP
   - Send e-mails using this connection
