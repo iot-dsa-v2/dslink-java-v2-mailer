@@ -1,7 +1,7 @@
 package org.iot.dsa.dslink.v2.mailer;
 
 import org.iot.dsa.dslink.DSRequestException;
-import org.iot.dsa.dslink.DSRootNode;
+import org.iot.dsa.dslink.DSMainNode;
 import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
@@ -72,7 +72,7 @@ public class MailConnectionNode extends DSNode {
 
     private ActionResult edit(DSMap parameters) {
         setParameters(parameters);
-        DSRootNode par = (DSRootNode) getParent();
+        DSMainNode par = (DSMainNode) getParent();
         par.getLink().save();
         return null;
     }

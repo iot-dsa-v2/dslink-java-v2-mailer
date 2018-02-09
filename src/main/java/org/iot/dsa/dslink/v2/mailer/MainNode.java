@@ -1,6 +1,6 @@
 package org.iot.dsa.dslink.v2.mailer;
 
-import org.iot.dsa.dslink.DSRootNode;
+import org.iot.dsa.dslink.DSMainNode;
 import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
@@ -12,10 +12,11 @@ import org.iot.dsa.node.action.DSAction;
  * @author James (Juris) Puchin
  * Created on 10/17/2017
  */
-public class RootNode extends DSRootNode {
+public class MainNode extends DSMainNode {
     // Nodes must support the public no-arg constructor.  Technically this isn't required here
     // since there are no other constructors...
-    public RootNode() {
+    public MainNode() {
+
     }
 
     /**
@@ -36,7 +37,7 @@ public class RootNode extends DSRootNode {
         DSAction act = new DSAction() {
             @Override
             public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((RootNode) info.getParent()).addSMTP(invocation.getParameters());
+                return ((MainNode) info.getParent()).addSMTP(invocation.getParameters());
             }
         };
         act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null);
@@ -58,7 +59,7 @@ public class RootNode extends DSRootNode {
         DSAction act = new DSAction() {
             @Override
             public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((RootNode) info.getParent()).addGmail(invocation.getParameters());
+                return ((MainNode) info.getParent()).addGmail(invocation.getParameters());
             }
         };
         act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null);

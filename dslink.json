@@ -4,10 +4,10 @@
   "description": "E-mail link",
   "main": "bin/dslink-java-v2-mailer",
   "configs": {
-    "rootType": {
+    "mainType": {
       "desc": "Fully qualified class name of the root node of the link.",
       "type": "string",
-      "value": "org.iot.dsa.dslink.v2.mailer.RootNode"
+      "value": "org.iot.dsa.dslink.v2.mailer.MainNode"
     },
     "broker": {
       "desc": "URL to broker.",
