@@ -152,17 +152,17 @@ public class MailConnectionNode extends DSNode {
         put(password, DSPasswordAes.valueOf(pass));
     }
 
-    public static void main(String[] args) {
-        Session ses = connectToSerever(Cred.E_USER, Cred.E_PASS, Cred.GOOGLE_HOST, Cred.GOOGLE_PORT);
-        Message mes = new MimeMessage(ses);
-        try{
-        mes.setRecipients(Message.RecipientType.TO, InternetAddress.parse(Cred.T_USER));
-
-             Transport.send(mes);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public static void main(String[] args) {
+//        Session ses = connectToSerever(Cred.E_USER, Cred.E_PASS, Cred.GOOGLE_HOST, Cred.GOOGLE_PORT);
+//        Message mes = new MimeMessage(ses);
+//        try{
+//        mes.setRecipients(Message.RecipientType.TO, InternetAddress.parse(Cred.T_USER));
+//
+//             Transport.send(mes);
+//        } catch (MessagingException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private static Session connectToSerever(final String user, final String pass, String host, String port) {
         //Connect to server
