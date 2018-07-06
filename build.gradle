@@ -41,3 +41,7 @@ run {
     workingDir project.buildDir
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8.1'
+}
+
