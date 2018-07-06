@@ -1,6 +1,5 @@
 # dslink-java-v2-mailer
 
-* Version: 1.1.0
 * Java - version 1.6 and up.
 * [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -19,7 +18,7 @@ This link was built using the Java DSLink SDK which can be found
 
 This section outlines the hierarchy of nodes defined by this link.
 
-- _RootNode_ - Used to add new e-mail account connections.
+- _MainNode_ - Used to add new e-mail account connections.
   - _ConnectionNode_ - Used to send e-mails and manage the account.
 
 
@@ -29,7 +28,7 @@ The following section provides detailed descriptions of each node in the link as
 descriptions of actions, values and child nodes.
 
 
-### RootNode
+### MainNode
 
 This is the root node of the link.  It has actions for connecting to new databases.
 
@@ -70,6 +69,8 @@ at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 ## History
 
+* Version 1.1.1
+  - Dependency updates
 * Version 1.1.0
   - Handle From, Cc and Bcc
   - Handle attachments

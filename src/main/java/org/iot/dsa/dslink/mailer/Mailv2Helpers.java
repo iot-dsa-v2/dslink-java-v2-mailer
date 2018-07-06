@@ -1,4 +1,4 @@
-package org.iot.dsa.dslink.v2.mailer;
+package org.iot.dsa.dslink.mailer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
