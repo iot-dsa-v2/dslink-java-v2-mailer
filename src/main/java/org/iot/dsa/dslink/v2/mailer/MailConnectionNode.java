@@ -1,7 +1,7 @@
 package org.iot.dsa.dslink.v2.mailer;
 
 import org.iot.dsa.dslink.DSRequestException;
-import org.iot.dsa.dslink.DSRootNode;
+import org.iot.dsa.dslink.DSMainNode;
 import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
@@ -72,7 +72,7 @@ public class MailConnectionNode extends DSNode {
 
     private ActionResult edit(DSMap parameters) {
         setParameters(parameters);
-        DSRootNode par = (DSRootNode) getParent();
+        DSMainNode par = (DSMainNode) getParent();
         par.getLink().save();
         return null;
     }
@@ -152,27 +152,53 @@ public class MailConnectionNode extends DSNode {
         put(password, DSPasswordAes.valueOf(pass));
     }
 
+//    public static void main(String[] args) {
+//        Session ses = connectToSerever(Cred.E_USER, Cred.E_PASS, Cred.GOOGLE_HOST, Cred.GOOGLE_PORT);
+//        Message mes = new MimeMessage(ses);
+//        try{
+//        mes.setRecipients(Message.RecipientType.TO, InternetAddress.parse(Cred.T_USER));
+//
+//             Transport.send(mes);
+//        } catch (MessagingException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    private static Session connectToSerever(final String user, final String pass, String host, String port) {
+        //Connect to server
+        Properties props = new Properties();
+        boolean ssl = false;
+        if (ssl) {
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.socketFactory.port", "465");
+            props.put("mail.smtp.socketFactory.class",
+                    "javax.net.ssl.SSLSocketFactory");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.port", "465");
+        } else{
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", host);
+            props.put("mail.smtp.port", port);
+        }
+        return Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user, pass);
+                    }
+                });
+    }
+
     private void executeSendMailTLS(String to_mail, String subj, String body, String from,
                                     String cc, String bcc, String att_name, String att_path,
                                     DSBytes att_byte) {
         //Get node variables
         final String username = usr_name.getValue().toString();
         final String password = getCurPass();
-        final String host = this.host.getValue().toString(); // "smtp.gmail.com";
-        final String port = this.port.getValue().toString(); //"587";
+        final String host = this.host.getValue().toString(); // ;
+        final String port = this.port.getValue().toString(); //;
 
-        //Connect to server
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
+        Session session = connectToSerever(username, password, host, port);
 
         //Construct message
         try {
