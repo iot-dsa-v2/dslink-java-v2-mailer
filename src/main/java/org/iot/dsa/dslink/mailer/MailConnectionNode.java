@@ -6,7 +6,7 @@ import org.iot.dsa.node.*;
 import org.iot.dsa.node.action.ActionInvocation;
 import org.iot.dsa.node.action.ActionResult;
 import org.iot.dsa.node.action.DSAction;
-import org.iot.dsa.security.DSPasswordAes;
+import org.iot.dsa.security.DSPasswordAes128;
 import org.iot.dsa.util.DSException;
 
 import javax.activation.DataHandler;
@@ -47,7 +47,7 @@ public class MailConnectionNode extends DSNode {
     protected void declareDefaults() {
         super.declareDefaults();
         declareDefault(Mailv2Helpers.E_USER, DSString.valueOf("No User"));
-        declareDefault(Mailv2Helpers.E_PASSWORD, DSPasswordAes.valueOf("No Pass")).setHidden(true);
+        declareDefault(Mailv2Helpers.E_PASSWORD, DSPasswordAes128.valueOf("No Pass")).setHidden(true);
         declareDefault(Mailv2Helpers.HOST, DSString.valueOf("No Host"));
         declareDefault(Mailv2Helpers.PORT, DSString.valueOf("587"));
 
@@ -145,11 +145,11 @@ public class MailConnectionNode extends DSNode {
     }
 
     private String getCurPass() {
-        return ((DSPasswordAes) password.getValue()).decode();
+        return ((DSPasswordAes128) password.getValue()).decode();
     }
 
     private void setCurPass(String pass) {
-        put(password, DSPasswordAes.valueOf(pass));
+        put(password, DSPasswordAes128.valueOf(pass));
     }
 
 //    public static void main(String[] args) {
