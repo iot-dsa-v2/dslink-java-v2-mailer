@@ -73,7 +73,6 @@ public class MailConnectionNode extends DSNode {
     private ActionResult edit(DSMap parameters) {
         setParameters(parameters);
         DSMainNode par = (DSMainNode) getParent();
-        par.getLink().save();
         return null;
     }
 

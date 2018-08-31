@@ -1,4 +1,5 @@
 # Tooling
+**.iml
 **/.classpath
 **/.idea
 **/.metadata
@@ -8,7 +9,6 @@
 
 # Build artifacts
 **.class
-**.iml
 **/.gradle
 **/build
 **/out
