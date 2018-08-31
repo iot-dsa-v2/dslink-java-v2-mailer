@@ -1,17 +1,12 @@
 {
   "name": "MAILv2",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "E-mail link",
   "main": "bin/dslink-java-v2-mailer",
   "configs": {
     "handler_class": {
       "type": "string",
       "value": "org.iot.dsa.dslink.v2.mailer.MainNode"
-    },
-    "log": {
-      "desc": "all, trace, debug, fine, warn, info, error, admin, fatal, none",
-      "type": "enum",
-      "value": "info"
     }
   }
 }

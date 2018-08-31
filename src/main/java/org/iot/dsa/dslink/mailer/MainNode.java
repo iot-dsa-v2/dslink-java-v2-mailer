@@ -51,7 +51,6 @@ public class MainNode extends DSMainNode {
     private ActionResult addSMTP(DSMap parameters) {
         DSNode nextDB = new MailConnectionNode(parameters);
         add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
-        getLink().save();
         return null;
     }
 
@@ -73,7 +72,6 @@ public class MainNode extends DSMainNode {
         parameters.put(Mailv2Helpers.PORT, DSString.valueOf("587"));
         DSNode nextDB = new MailConnectionNode(parameters);
         add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
-        getLink().save();
         return null;
     }
 }

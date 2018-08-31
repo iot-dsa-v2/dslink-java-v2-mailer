@@ -69,6 +69,12 @@ at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 ## History
 
+* Version 1.1.3
+  - Grade update.
+  - Fixes for latest SDK.
+* Version 1.1.2
+  - Dependency updates.
+  - Change DSPasswordAes to DSPasswordAES128.
 * Version 1.1.1
   - Dependency updates
 * Version 1.1.0
