@@ -71,7 +71,7 @@ account for sending email through it.
     - Body Text - Optional, plain text body message.
     - Attachment Name - Optional, only used if sending attachment.
     - Attachment Mime-Type - Optional, only used if sending attachment.  If not provided,
-      the mime-type will be guess from the name and attachment bytes and defaults
+      the mime-type will be guessed from the name and attachment bytes and defaults
       to application/octet-stream if it can't be determined.
     - Attachment Data - DSA Binary type representing the attachment.
 - Delete - Delete the connection node
