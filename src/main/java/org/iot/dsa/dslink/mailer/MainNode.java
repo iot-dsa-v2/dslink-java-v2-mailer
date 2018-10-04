@@ -29,8 +29,8 @@ public class MainNode extends DSMainNode {
     @Override
     protected void declareDefaults() {
         super.declareDefaults();
-        declareDefault(Mailv2Helpers.DOCS,
-                       DSString.valueOf("https://github.com/iot-dsa-v2/dslink-java-v2-mailer"))
+        declareDefault(Mailv2Helpers.DOCS, DSString.valueOf(
+                "https://github.com/iot-dsa-v2/dslink-java-v2-mailer#dslink-java-v2-mailer"))
                 .setTransient(true)
                 .setReadOnly(true);
         declareDefault(Mailv2Helpers.ADD_SMTP, makeAddSMTPAction()).setTransient(true);
@@ -41,13 +41,13 @@ public class MainNode extends DSMainNode {
         parameters.put(Mailv2Helpers.HOST, DSString.valueOf("smtp.gmail.com"));
         parameters.put(Mailv2Helpers.PORT, DSLong.valueOf(587));
         DSNode nextDB = new MailConnectionNode(parameters);
-        add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
+        add(parameters.getString(Mailv2Helpers.NODE_NAME), nextDB);
         return null;
     }
 
     private ActionResult addSMTP(DSMap parameters) {
         DSNode nextDB = new MailConnectionNode(parameters);
-        add(parameters.getString(Mailv2Helpers.CON_NAME), nextDB);
+        add(parameters.getString(Mailv2Helpers.NODE_NAME), nextDB);
         return null;
     }
 
@@ -58,10 +58,10 @@ public class MainNode extends DSMainNode {
                 return ((MainNode) info.getParent()).addGmail(invocation.getParameters());
             }
         };
-        act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null)
+        act.addParameter(Mailv2Helpers.NODE_NAME, DSValueType.STRING, null)
            .setDefault(DSString.valueOf("Gmail"));
         act.addParameter(Mailv2Helpers.USER_NAME, DSValueType.STRING, null);
-        String desc = "Should be an application password";
+        String desc = "Get an application password";
         act.addParameter(Mailv2Helpers.PASSWORD, DSValueType.STRING, desc)
            .setPlaceHolder(desc)
            .setEditor("password");
@@ -75,7 +75,7 @@ public class MainNode extends DSMainNode {
                 return ((MainNode) info.getParent()).addSMTP(invocation.getParameters());
             }
         };
-        act.addParameter(Mailv2Helpers.CON_NAME, DSValueType.STRING, null)
+        act.addParameter(Mailv2Helpers.NODE_NAME, DSValueType.STRING, null)
            .setDefault(DSString.valueOf("SMTP"));
         act.addParameter(Mailv2Helpers.USER_NAME, DSValueType.STRING, null);
         act.addParameter(Mailv2Helpers.PASSWORD, DSValueType.STRING, null)

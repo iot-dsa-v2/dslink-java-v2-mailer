@@ -39,6 +39,7 @@ public class MailConnectionNode extends DSBaseConnection {
 
     private final DSInfo enabled = getInfo(Mailv2Helpers.ENABLED);
     private final DSInfo host = getInfo(Mailv2Helpers.HOST);
+    private MimetypesFileTypeMap mimeTypeMap;
     private final DSInfo password = getInfo(Mailv2Helpers.PASSWORD);
     private final DSInfo port = getInfo(Mailv2Helpers.PORT);
     private final DSInfo ssl = getInfo(Mailv2Helpers.SSL);
@@ -96,8 +97,7 @@ public class MailConnectionNode extends DSBaseConnection {
                                            boolean ssl) {
         Properties props = new Properties();
         if (ssl) {
-            props.put("mail.smtp.socketFactory.port", port);
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            props.put("mail.smtp.ssl.enable", true);
         }
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -155,9 +155,13 @@ public class MailConnectionNode extends DSBaseConnection {
                     warn("Failed to guess attachment mime type.");
                 }
                 if ((mimeType == null) || mimeType.isEmpty()) {
-                    //Guess type from extension, default to "application/octet-stream"
                     if (att_name != null) {
-                        mimeType = new MimetypesFileTypeMap().getContentType(att_name);
+                        if (mimeTypeMap == null) {
+                            mimeTypeMap = new MimetypesFileTypeMap();
+                        }
+                        mimeType = mimeTypeMap.getContentType(att_name);
+                    } else {
+                        mimeType = "application/octet-stream";
                     }
                 }
                 if (att_name == null) {
@@ -224,8 +228,9 @@ public class MailConnectionNode extends DSBaseConnection {
         desc = "Optional and only used if sending attachment";
         act.addParameter(Mailv2Helpers.ATTACH_NAME, DSValueType.STRING, desc)
            .setPlaceHolder(desc);
-        act.addParameter(Mailv2Helpers.ATTACH_MIME_TYPE, DSValueType.STRING, desc)
-           .setPlaceHolder(desc);
+        String desc2 = "Optional, guessed using name and data if not provided";
+        act.addParameter(Mailv2Helpers.ATTACH_MIME_TYPE, DSValueType.STRING, desc2)
+           .setPlaceHolder(desc2);
         act.addParameter(Mailv2Helpers.ATTACH_DATA, DSValueType.BINARY, desc)
            .setEditor("fileinput");
         return act;

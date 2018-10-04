@@ -5,8 +5,7 @@
 
 ## Overview
 
-Link for sending e-mail alarms and notifications. 
-Connect a Gmail or other SMTP server account, and use the "Send" action to send alerts and notifications.
+Link for sending e-mail via SMTP.
 
 If you are not familiar with DSA, an overview can be found at
 [here](http://iot-dsa.org/get-started/how-dsa-works).
@@ -16,25 +15,36 @@ This link was built using the Java DSLink SDK which can be found
 
 ## Link Architecture
 
-This section outlines the hierarchy of nodes defined by this link.
+These are nodes defined by this link:
 
 - _MainNode_ - Used to add new e-mail account connections.
-  - _ConnectionNode_ - Used to send e-mails and manage the account.
+  - _ConnectionNode_ - Used to send e-mail.
 
 
 ## Node Guide
 
-The following section provides detailed descriptions of each node in the link as well as
+The following section provides descriptions of nodes in the link as well as
 descriptions of actions, values and child nodes.
 
 
 ### MainNode
 
-This is the root node of the link.  It has actions for connecting to new databases.
+This is the root node of the link.  Use it to create connections to email servers.
 
 **Actions**
-- Add SMTP Connection - Adds a connection to an SMTP e-mail account.
-- Add Gmail Connection - Adds a SMTP connection preconfigured for Gmail.
+- Add SMTP Connection - Adds a connection to an SMTP e-mail account.  The
+  parameters are:
+  - Node Name - What to name the connection node in the tree.
+  - User Name - User account used to authenticate with the smtp server.
+  - Password - Password for the user account.
+  - Host Name - SMTP server host or IP.
+  - Port - SMTP server port.
+- Add Gmail Connection - Adds a SMTP connection preconfigured for Gmail.  The
+  parameters are:
+  - Node Name - What to name the connection node in the tree.
+  - User Name - User account used to authenticate with the smtp server.
+  - Password - This should be an application password, they can be
+    generated in Gmail account settings.
 
 **Values**
 - Help - Link to this doc.
@@ -60,7 +70,7 @@ account for sending email through it.
     - Subject - Optional, subject line text.
     - Body Text - Optional, plain text body message.
     - Attachment Name - Optional, only used if sending attachment.
-    - Attachment Mime-Type - Optional, only used if sending attachment.  If not provide,
+    - Attachment Mime-Type - Optional, only used if sending attachment.  If not provided,
       the mime-type will be guess from the name and attachment bytes and defaults
       to application/octet-stream if it can't be determined.
     - Attachment Data - DSA Binary type representing the attachment.
@@ -72,9 +82,11 @@ account for sending email through it.
 - Host Name - Host name of the SMTP server.
 - Last Fail - Last time sending failed.
 - Last Ok - Last time sending succeeded.
-- Password - Password for the given user.
+- Password - Password for the given username.  For Gmail this should
+  be an application password.
 - Port - SMTP server port
-- SSL - Set to true if the server uses SSL rather than TLS
+- SSL - Set to true if server port explicitly uses SSL/TLS.  The link
+  will attempt to upgrade to SSL/TLS no matter what.
 - Status - Options are disabled, down, fault and ok.  Down resents
   a send failure and fault is used for configuration errors.
 - Status Text - Uses to describe fault or down conditions.
@@ -93,6 +105,7 @@ at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
 
 * Version 1.2.0
   - Connection node now subclasses DSBaseConnection from the SDK.
+  - Major refactor.
 * Version 1.1.3
   - Grade update.
   - Fixes for latest SDK.
