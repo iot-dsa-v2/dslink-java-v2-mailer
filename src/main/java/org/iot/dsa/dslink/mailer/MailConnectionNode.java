@@ -79,7 +79,7 @@ public class MailConnectionNode extends DSBaseConnection {
         declareDefault(Mailv2Helpers.SSL, DSBool.valueOf(false));
         declareDefault(Mailv2Helpers.SEND_MAIL, makeSendMailAction());
         declareDefault(Mailv2Helpers.DELETE, makeDeleteAction());
-        put("Status", DSStatus.ok); //TODO - change to constant in next sdk release
+        put(STATUS, DSStatus.ok);
     }
 
     @Override
