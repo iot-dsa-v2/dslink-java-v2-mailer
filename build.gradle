@@ -34,6 +34,6 @@ run {
 }
 
 wrapper {
-    gradleVersion = '4.10'
+    gradleVersion = '4.10.2'
 }
 

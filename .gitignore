@@ -27,3 +27,4 @@
 **/nodes.json
 **/nodes*.zip
 **/*.log.*.zip
+/dslink.jks
