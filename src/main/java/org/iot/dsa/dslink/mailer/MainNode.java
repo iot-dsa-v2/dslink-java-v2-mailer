@@ -29,7 +29,7 @@ public class MainNode extends DSMainNode {
     @Override
     protected void declareDefaults() {
         super.declareDefaults();
-        declareDefault(Mailv2Helpers.DOCS, DSString.valueOf(
+        declareDefault(Mailv2Helpers.HELP, DSString.valueOf(
                 "https://github.com/iot-dsa-v2/dslink-java-v2-mailer#dslink-java-v2-mailer"))
                 .setTransient(true)
                 .setReadOnly(true);
@@ -52,10 +52,10 @@ public class MainNode extends DSMainNode {
     }
 
     private DSAction makeAddGmailAction() {
-        DSAction act = new DSAction() {
+        DSAction act = new DSAction.Parameterless() {
             @Override
-            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((MainNode) info.getParent()).addGmail(invocation.getParameters());
+            public ActionResult invoke(DSInfo target, ActionInvocation invocation) {
+                return ((MainNode) target.get()).addGmail(invocation.getParameters());
             }
         };
         act.addParameter(Mailv2Helpers.NODE_NAME, DSValueType.STRING, null)
@@ -69,10 +69,10 @@ public class MainNode extends DSMainNode {
     }
 
     private DSAction makeAddSMTPAction() {
-        DSAction act = new DSAction() {
+        DSAction act = new DSAction.Parameterless() {
             @Override
-            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((MainNode) info.getParent()).addSMTP(invocation.getParameters());
+            public ActionResult invoke(DSInfo target, ActionInvocation invocation) {
+                return ((MainNode) target.get()).addSMTP(invocation.getParameters());
             }
         };
         act.addParameter(Mailv2Helpers.NODE_NAME, DSValueType.STRING, null)
