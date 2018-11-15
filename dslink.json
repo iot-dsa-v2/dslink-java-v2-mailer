@@ -4,7 +4,7 @@
   "description": "E-mail link",
   "main": "bin/dslink-java-v2-mailer",
   "configs": {
-    "handler_class": {
+    "main-node": {
       "type": "string",
       "value": "org.iot.dsa.dslink.mailer.MainNode"
     },
