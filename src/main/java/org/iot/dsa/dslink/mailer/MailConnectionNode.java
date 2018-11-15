@@ -39,11 +39,11 @@ public class MailConnectionNode extends DSBaseConnection {
 
     private final DSInfo enabled = getInfo(Mailv2Helpers.ENABLED);
     private final DSInfo host = getInfo(Mailv2Helpers.HOST);
-    private MimetypesFileTypeMap mimeTypeMap;
     private final DSInfo password = getInfo(Mailv2Helpers.PASSWORD);
     private final DSInfo port = getInfo(Mailv2Helpers.PORT);
     private final DSInfo ssl = getInfo(Mailv2Helpers.SSL);
     private final DSInfo userName = getInfo(Mailv2Helpers.USER_NAME);
+    private MimetypesFileTypeMap mimeTypeMap;
 
     public MailConnectionNode() {
     }
@@ -71,23 +71,14 @@ public class MailConnectionNode extends DSBaseConnection {
     @Override
     protected void declareDefaults() {
         super.declareDefaults();
-        declareDefault(Mailv2Helpers.ENABLED, DSBool.TRUE);
+        declareDefault(ENABLED, DSBool.TRUE);
         declareDefault(Mailv2Helpers.USER_NAME, DSString.valueOf(""));
         declareDefault(Mailv2Helpers.PASSWORD, DSPasswordAes128.NULL);
         declareDefault(Mailv2Helpers.HOST, DSString.valueOf(""));
         declareDefault(Mailv2Helpers.PORT, DSLong.valueOf(587));
         declareDefault(Mailv2Helpers.SSL, DSBool.valueOf(false));
         declareDefault(Mailv2Helpers.SEND_MAIL, makeSendMailAction());
-        declareDefault(Mailv2Helpers.DELETE, makeDeleteAction());
         put(STATUS, DSStatus.ok);
-    }
-
-    @Override
-    protected void onChildChanged(DSInfo child) {
-        if (child == enabled) {
-            canConnect(); //update disabled status
-        }
-        super.onChildChanged(child);
     }
 
     private static Session connectToServer(final String user,
@@ -195,21 +186,11 @@ public class MailConnectionNode extends DSBaseConnection {
         return ((DSPasswordAes128) password.getValue()).decode();
     }
 
-    private DSAction makeDeleteAction() {
-        return new DSAction() {
-            @Override
-            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                ((MailConnectionNode) info.getParent()).delete();
-                return null;
-            }
-        };
-    }
-
     private DSAction makeSendMailAction() {
-        DSAction act = new DSAction() {
+        DSAction act = new DSAction.Parameterless() {
             @Override
-            public ActionResult invoke(DSInfo info, ActionInvocation invocation) {
-                return ((MailConnectionNode) info.getParent()).sendMail(invocation.getParameters());
+            public ActionResult invoke(DSInfo target, ActionInvocation invocation) {
+                return ((MailConnectionNode) target.get()).sendMail(invocation.getParameters());
             }
         };
         String desc = "Need one of To, Cc or Bcc";

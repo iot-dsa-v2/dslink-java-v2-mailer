@@ -1,6 +1,6 @@
 # dslink-java-v2-mailer
 
-* Java - version 1.6 and up.
+* Java - version 1.8 and up.
 * [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Overview
@@ -100,23 +100,3 @@ This software contains unmodified binary redistributions of
 [sdk-dslink-java](https://github.com/iot-dsa-v2/sdk-dslink-java), which is licensed 
 and available under the Apache License 2.0. An original copy of the license agreement can be found 
 at https://github.com/iot-dsa-v2/sdk-dslink-java/blob/master/LICENSE
-
-## History
-
-* Version 1.2.0
-  - Connection node now subclasses DSBaseConnection from the SDK.
-  - Major refactor.
-* Version 1.1.3
-  - Grade update.
-  - Fixes for latest SDK.
-* Version 1.1.2
-  - Dependency updates.
-  - Change DSPasswordAes to DSPasswordAES128.
-* Version 1.1.1
-  - Dependency updates
-* Version 1.1.0
-  - Handle From, Cc and Bcc
-  - Handle attachments
-* Version 1.0.0
-  - Connect to Gmail or other SMTP
-  - Send e-mails using this connection
