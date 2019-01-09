@@ -65,7 +65,6 @@ public class MailConnectionNode extends DSBaseConnection {
         if (host.getElement().toString().isEmpty()) {
             throw new IllegalStateException("Empty hostname");
         }
-        configOk();
     }
 
     @Override
