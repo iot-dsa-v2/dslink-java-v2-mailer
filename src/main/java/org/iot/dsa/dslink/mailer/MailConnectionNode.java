@@ -20,7 +20,6 @@ import org.iot.dsa.node.DSBytes;
 import org.iot.dsa.node.DSInfo;
 import org.iot.dsa.node.DSLong;
 import org.iot.dsa.node.DSMap;
-import org.iot.dsa.node.DSStatus;
 import org.iot.dsa.node.DSString;
 import org.iot.dsa.node.DSValueType;
 import org.iot.dsa.node.action.ActionInvocation;
@@ -37,24 +36,18 @@ import org.iot.dsa.util.DSException;
  */
 public class MailConnectionNode extends DSBaseConnection {
 
-    private final DSInfo enabled = getInfo(Mailv2Helpers.ENABLED);
     private final DSInfo host = getInfo(Mailv2Helpers.HOST);
+    private MimetypesFileTypeMap mimeTypeMap;
     private final DSInfo password = getInfo(Mailv2Helpers.PASSWORD);
     private final DSInfo port = getInfo(Mailv2Helpers.PORT);
     private final DSInfo ssl = getInfo(Mailv2Helpers.SSL);
     private final DSInfo userName = getInfo(Mailv2Helpers.USER_NAME);
-    private MimetypesFileTypeMap mimeTypeMap;
 
     public MailConnectionNode() {
     }
 
     MailConnectionNode(DSMap params) {
         setParameters(params);
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled.getElement().toBoolean();
     }
 
     @Override
@@ -70,14 +63,12 @@ public class MailConnectionNode extends DSBaseConnection {
     @Override
     protected void declareDefaults() {
         super.declareDefaults();
-        declareDefault(ENABLED, DSBool.TRUE);
         declareDefault(Mailv2Helpers.USER_NAME, DSString.valueOf(""));
         declareDefault(Mailv2Helpers.PASSWORD, DSPasswordAes128.NULL);
         declareDefault(Mailv2Helpers.HOST, DSString.valueOf(""));
         declareDefault(Mailv2Helpers.PORT, DSLong.valueOf(587));
         declareDefault(Mailv2Helpers.SSL, DSBool.valueOf(false));
         declareDefault(Mailv2Helpers.SEND_MAIL, makeSendMailAction());
-        put(STATUS, DSStatus.ok);
     }
 
     private static Session connectToServer(final String user,
@@ -99,10 +90,6 @@ public class MailConnectionNode extends DSBaseConnection {
                                            return new PasswordAuthentication(user, pass);
                                        }
                                    });
-    }
-
-    private void delete() {
-        getParent().remove(getInfo());
     }
 
     private void executeSend(String to_mail, String subj, String body, String from, String cc,
@@ -174,6 +161,7 @@ public class MailConnectionNode extends DSBaseConnection {
             //Send
             message.setContent(multipart);
             Transport.send(message);
+            connOk();
             debug(debug() ? "Email sent " + getPath() : null);
         } catch (Exception e) {
             error(getPath(), e);
