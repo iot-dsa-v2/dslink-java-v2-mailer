@@ -5,7 +5,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -41,6 +40,7 @@ public class MailConnectionNode extends DSBaseConnection {
     private final DSInfo password = getInfo(Mailv2Helpers.PASSWORD);
     private final DSInfo port = getInfo(Mailv2Helpers.PORT);
     private final DSInfo ssl = getInfo(Mailv2Helpers.SSL);
+    private final DSInfo timeout = getInfo(Mailv2Helpers.TIMEOUT);
     private final DSInfo userName = getInfo(Mailv2Helpers.USER_NAME);
 
     public MailConnectionNode() {
@@ -69,38 +69,31 @@ public class MailConnectionNode extends DSBaseConnection {
         declareDefault(Mailv2Helpers.PORT, DSLong.valueOf(587));
         declareDefault(Mailv2Helpers.SSL, DSBool.valueOf(false));
         declareDefault(Mailv2Helpers.SEND_MAIL, makeSendMailAction());
+        declareDefault(Mailv2Helpers.TIMEOUT,
+                       DSLong.valueOf(15000),
+                       "Connection and read timeout");
     }
 
-    private static Session connectToServer(final String user,
-                                           final String pass,
-                                           String host,
-                                           int port,
-                                           boolean ssl) {
+    private Session connectToServer() {
         Properties props = new Properties();
-        if (ssl) {
+        boolean s = ssl.getElement().toBoolean();
+        if (s) {
             props.put("mail.smtp.ssl.enable", true);
         }
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        return Session.getInstance(props,
-                                   new javax.mail.Authenticator() {
-                                       protected PasswordAuthentication getPasswordAuthentication() {
-                                           return new PasswordAuthentication(user, pass);
-                                       }
-                                   });
+        props.put("mail.smtp.host", host.get().toString());
+        props.put("mail.smtp.port", port.getElement().toInt());
+        props.put("mail.smtp.connectionTimeout", timeout.getElement().toInt());
+        props.put("mail.smtp.timeout", timeout.getElement().toInt());
+        return Session.getInstance(props, null);
     }
 
     private void executeSend(String to_mail, String subj, String body, String from, String cc,
                              String bcc, String att_name, DSBytes att_byte, String mimeType) {
+        Transport tpt = null;
         try {
-            Session session = connectToServer(
-                    userName.getElement().toString(),
-                    getCurPass(),
-                    host.getElement().toString(),
-                    port.getElement().toInt(),
-                    ssl.getElement().toBoolean());
+            Session session = connectToServer();
             Message message = new MimeMessage(session);
             if (from != null) {
                 message.setFrom(new InternetAddress(from));
@@ -160,12 +153,32 @@ public class MailConnectionNode extends DSBaseConnection {
             multipart.addBodyPart(msg_body);
             //Send
             message.setContent(multipart);
-            Transport.send(message);
+            message.saveChanges();
+            tpt = session.getTransport("smtp");
+            if (tpt == null) {
+                connDown("Cannot connect to host: null transport");
+                throw new IllegalStateException("Cannot connect to host: null transport");
+            }
+            try {
+                tpt.connect(userName.get().toString(), getCurPass());
+            } catch (Exception x) {
+                connDown(DSException.makeMessage(x));
+                throw x;
+            }
+            tpt.sendMessage(message, message.getAllRecipients());
             connOk();
             debug(debug() ? "Email sent " + getPath() : null);
         } catch (Exception e) {
-            error(getPath(), e);
+            error(e);
             DSException.throwRuntime(e);
+        } finally {
+            if (tpt != null) {
+                try {
+                    tpt.close();
+                } catch (Exception x) {
+                    warn(x);
+                }
+            }
         }
     }
 
@@ -232,7 +245,7 @@ public class MailConnectionNode extends DSBaseConnection {
             executeSend(to, subj, body, from, cc, bcc, att_name, att_byte, mimeType);
             connOk();
         } catch (Exception x) {
-            error(getPath(), x);
+            error(x);
             connDown(DSException.makeMessage(x));
         }
         return null;

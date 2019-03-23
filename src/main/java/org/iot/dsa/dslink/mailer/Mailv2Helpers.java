@@ -29,6 +29,7 @@ class Mailv2Helpers {
     static final String HOST = "Host Name";
     static final String PORT = "Port";
     static final String SSL = "SSL";
+    static final String TIMEOUT = "Timeout";
 
     static final String ENABLED = "Enabled";
     static final String DELETE = "Delete";
