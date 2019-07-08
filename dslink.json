@@ -1,6 +1,6 @@
 {
   "name": "dslink-java-v2-mailer",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "E-mail link",
   "main": "bin/dslink-java-v2-mailer",
   "configs": {
