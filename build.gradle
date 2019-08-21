@@ -1,22 +1,26 @@
-import groovy.json.JsonSlurper
-
 apply plugin: 'application'
 apply plugin: 'java'
 
-group 'org.iot-dsa'
+// Version is taken from dslink.json
+build {
+    version = new groovy.json.JsonSlurper().parseText(file('dslink.json').text).version
+}
+
 mainClassName = 'org.iot.dsa.dslink.DSLink'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-build {
-    def inputFile = file('dslink.json')
-    def json = new JsonSlurper().parseText(inputFile.text)
-    version = json.version
+repositories {
+    jcenter()
+    mavenLocal()
+    maven {
+        url 'https://jitpack.io'
+    }
 }
 
 repositories {
-    //mavenLocal()
     jcenter()
+    mavenLocal()
     maven {
         url 'https://jitpack.io'
     }
@@ -24,11 +28,21 @@ repositories {
 
 dependencies {
     //implementation 'org.iot-dsa:dslink-v2-websocket:+' //for a locally installed sdk
-    implementation 'com.github.iot-dsa-v2.sdk-dslink-java-v2:dslink-v2-websocket:0.63.0'
+    implementation 'com.github.iot-dsa-v2.sdk-dslink-java-v2:dslink-v2-websocket:0.67.0'
     implementation 'com.sun.mail:javax.mail:1.6.2'
 }
 
 applicationDistribution.from(new File(project.projectDir, "/dslink.json"))
+
+distZip {
+    archiveName project.name + ".zip"
+    eachFile { file ->
+        String path = file.relativePath
+        file.setPath(path.substring(path.indexOf("/")+1,path.length()))
+    }
+}
+
+distTar.enabled = false
 
 run {
     args System.getProperty("exec.args", "").split()
@@ -36,6 +50,6 @@ run {
 }
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '5.6'
 }
 
