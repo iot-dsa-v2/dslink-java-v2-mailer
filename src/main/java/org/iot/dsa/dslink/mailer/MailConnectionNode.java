@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import org.iot.dsa.conn.DSBaseConnection;
+import org.iot.dsa.dslink.ActionResults;
 import org.iot.dsa.dslink.DSRequestException;
 import org.iot.dsa.node.DSBool;
 import org.iot.dsa.node.DSBytes;
@@ -20,10 +21,8 @@ import org.iot.dsa.node.DSInfo;
 import org.iot.dsa.node.DSLong;
 import org.iot.dsa.node.DSMap;
 import org.iot.dsa.node.DSString;
-import org.iot.dsa.node.DSValueType;
-import org.iot.dsa.node.action.ActionInvocation;
-import org.iot.dsa.node.action.ActionResult;
 import org.iot.dsa.node.action.DSAction;
+import org.iot.dsa.node.action.DSIActionRequest;
 import org.iot.dsa.security.DSPasswordAes128;
 import org.iot.dsa.util.DSException;
 
@@ -187,32 +186,32 @@ public class MailConnectionNode extends DSBaseConnection {
     }
 
     private DSAction makeSendMailAction() {
-        DSAction act = new DSAction.Parameterless() {
+        DSAction act = new DSAction() {
             @Override
-            public ActionResult invoke(DSInfo target, ActionInvocation invocation) {
-                return ((MailConnectionNode) target.get()).sendMail(invocation.getParameters());
+            public ActionResults invoke(DSIActionRequest req) {
+                return ((MailConnectionNode) req.getTarget()).sendMail(req.getParameters());
             }
         };
         String desc = "Need one of To, Cc or Bcc";
-        act.addParameter(Mailv2Helpers.TO, DSValueType.STRING, Mailv2Helpers.REC_DESC)
+        act.addParameter(Mailv2Helpers.TO, DSString.NULL, Mailv2Helpers.REC_DESC)
            .setPlaceHolder(desc);
-        act.addParameter(Mailv2Helpers.CC, DSValueType.STRING, Mailv2Helpers.REC_DESC)
+        act.addParameter(Mailv2Helpers.CC, DSString.NULL, Mailv2Helpers.REC_DESC)
            .setPlaceHolder(desc);
-        act.addParameter(Mailv2Helpers.BCC, DSValueType.STRING, Mailv2Helpers.REC_DESC)
+        act.addParameter(Mailv2Helpers.BCC, DSString.NULL, Mailv2Helpers.REC_DESC)
            .setPlaceHolder(desc);
-        act.addParameter(Mailv2Helpers.FROM, DSValueType.STRING, null)
+        act.addParameter(Mailv2Helpers.FROM, DSString.NULL, null)
            .setPlaceHolder("Optional");
-        act.addParameter(Mailv2Helpers.SUBJ, DSValueType.STRING, null)
+        act.addParameter(Mailv2Helpers.SUBJ, DSString.NULL, null)
            .setPlaceHolder(Mailv2Helpers.DEF_SUBJ);
-        act.addParameter(Mailv2Helpers.BODY, DSValueType.STRING, "Plain text message")
+        act.addParameter(Mailv2Helpers.BODY, DSString.NULL, "Plain text message")
            .setPlaceHolder(Mailv2Helpers.DEF_BODY);
         desc = "Optional and only used if sending attachment";
-        act.addParameter(Mailv2Helpers.ATTACH_NAME, DSValueType.STRING, desc)
+        act.addParameter(Mailv2Helpers.ATTACH_NAME, DSString.NULL, desc)
            .setPlaceHolder(desc);
         String desc2 = "Optional, guessed using name and data if not provided";
-        act.addParameter(Mailv2Helpers.ATTACH_MIME_TYPE, DSValueType.STRING, desc2)
+        act.addParameter(Mailv2Helpers.ATTACH_MIME_TYPE, DSString.NULL, desc2)
            .setPlaceHolder(desc2);
-        act.addParameter(Mailv2Helpers.ATTACH_DATA, DSValueType.BINARY, desc)
+        act.addParameter(Mailv2Helpers.ATTACH_DATA, DSBytes.NULL, desc)
            .setEditor("fileinput");
         return act;
     }
@@ -225,7 +224,7 @@ public class MailConnectionNode extends DSBaseConnection {
         return res;
     }
 
-    private ActionResult sendMail(DSMap parameters) {
+    private ActionResults sendMail(DSMap parameters) {
         if (!canConnect()) {
             throw new RuntimeException("Cannot send email");
         }
