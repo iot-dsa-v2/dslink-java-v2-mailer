@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     //implementation 'org.iot-dsa:dslink-v2-websocket:+' //for a locally installed sdk
-    implementation 'com.github.iot-dsa-v2.sdk-dslink-java-v2:dslink-v2-websocket:0.70.0'
+    implementation 'com.github.iot-dsa-v2.sdk-dslink-java-v2:dslink-v2-websocket:0.75.2'
     implementation 'com.sun.mail:javax.mail:1.6.2'
 }
 
@@ -50,6 +50,6 @@ run {
 }
 
 wrapper {
-    gradleVersion = '5.6.2'
+    gradleVersion = '6.4.1'
 }
 

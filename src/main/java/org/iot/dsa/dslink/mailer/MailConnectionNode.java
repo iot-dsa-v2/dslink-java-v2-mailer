@@ -79,6 +79,7 @@ public class MailConnectionNode extends DSBaseConnection {
         if (s) {
             props.put("mail.smtp.ssl.enable", true);
         }
+        props.put("mail.smtp.ssl.trust", "*");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", host.get().toString());
